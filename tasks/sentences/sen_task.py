@@ -11,7 +11,7 @@ class SenTask:
         # print(words)
 
         self.vocab_size, self.word_to_i, self.i_to_word, data = tokenize_words_simple(words)
-        splits = np.where(data == self.word_to_i['.'])[0]
+        splits = np.where(data == self.word_to_i['.'])[0] + 1
         data = np.split(data, splits)
         batches = []
         for i in range(len(data) // batch_size):
