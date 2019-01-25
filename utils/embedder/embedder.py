@@ -28,7 +28,7 @@ class Embedder:
         embeddings = np.array([self.embed(word) for word in words])
 
         with open(file_path, 'wb') as handle:
-           pickle.dump(embeddings, handle)
+            pickle.dump(embeddings, handle)
 
     def embed(self, word):
         if word not in self.weights.keys():

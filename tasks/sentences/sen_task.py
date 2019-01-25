@@ -2,27 +2,40 @@ import sys
 sys.path.append('../')
 from utils.util import *
 from keras.preprocessing.sequence import pad_sequences
+import os
+import pickle
 
 class SenTask:
-    def __init__(self, batch_size, limit):
+    def __init__(self, batch_size, limit, exp_name):
         self.batch_size = batch_size
+        file_path = f'../../datasets/tasks/{exp_name}.pickle'
+        if not os.path.isfile(file_path):
+            self.generate(limit, file_path)
+        else:
+            with open(file_path, 'rb') as handle:
+                self.batches, self.vocab_size, self.word_to_i, self.i_to_word = pickle.load(handle)
+
+        self.train = self.batches[:-10]
+        self.dev = self.batches[-10:]
+        self.t_i = 0
+        self.d_i = 0
+
+    def generate(self, limit, file_path):
         text = open('../../datasets/childrens_book/data/cbt_train.txt').read()[:limit]
         words = clean_text(text)
-        # print(words)
 
         self.vocab_size, self.word_to_i, self.i_to_word, data = tokenize_words_simple(words)
         splits = np.where(data == self.word_to_i['.'])[0] + 1
         data = np.split(data, splits)
-        batches = []
-        for i in range(len(data) // batch_size):
-            batch = data[i * batch_size:(i + 1) * batch_size]
+        self.batches = []
+        for i in range(len(data) // self.batch_size):
+            batch = data[i * self.batch_size:(i + 1) * self.batch_size]
             batch = pad_sequences(batch, padding='post')
-            batches.append(batch)
-            
-        self.train = batches[:-10]
-        self.dev = batches[-10:]
-        self.t_i = 0
-        self.d_i = 0
+            self.batches.append(batch)
+
+        to_store = [self.batches, self.vocab_size, self.word_to_i, self.i_to_word]
+        with open(file_path, 'wb') as handle:
+            pickle.dump(to_store, handle)
 
     def train_batch(self):
         self.t_i = 0 if self.t_i + 1 == len(self.train) else self.t_i + 1
