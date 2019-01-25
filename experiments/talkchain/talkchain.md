@@ -10,7 +10,7 @@ Logs
 ## 1
 Around 7000 iterations, it reaches .07 training loss
 ## 2
-it seems weird to me that it gets that good performance at recovering the sentence. 
+it seems weird to me that it gets that good performance at recovering the sentence. It was wrong. The input to the rnn was the expected output. hehe 
 
 Other
 The relative change between GPU and cpu is 100x
