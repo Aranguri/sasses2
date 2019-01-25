@@ -13,7 +13,7 @@ learning_rate = 1e-4
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
 char_limit = -1#25000000
-seq_length_limit = 20
+seq_length_limit = 40
 exp_name = f'{exp_name},limit:{char_limit},batch_size:{batch_size}'
 running_GPU = True
 
@@ -36,8 +36,8 @@ start_stacked = tf.tile(start_vector, [batch_size, 1])
 start_stacked = tf.expand_dims(start_stacked, 1)
 shifted_inputs = tf.concat((start_stacked, inputs[:, :-1]), axis=1)
 
-rnn_fw = LSTM(hidden_size)#, name='rnn_fw')
-rnn_bw = LSTM(hidden_size)#, name='rnn_bw')
+rnn_fw = LSTM(hidden_size)
+rnn_bw = LSTM(hidden_size)
 _, final_state = tf.nn.dynamic_rnn(rnn_fw, inputs, dtype=tf.float32)
 outputs, _ = tf.nn.dynamic_rnn(rnn_fw, shifted_inputs, dtype=tf.float32)
 # Other options for the following function: (1) keep generating a prob. dist. directly, but use something more complex, like a mlp. (2) produce a vector in embedding space and compute the similarity over all the memories (aka attention.) Then we have a probability distribution.
@@ -47,7 +47,6 @@ loss = tf.losses.softmax_cross_entropy(sentences_hot, outputs)
 optimizer = tf.train.AdamOptimizer(learning_rate)
 minimize = optimizer.minimize(loss)
 
-run_options = tf.RunOptions(report_tensor_allocations_upon_oom = True)
 def debug_output(answer, output):
     ixs = np.argmax(output[0], axis=1)
     original = ' '.join(task.ixs_to_words(answer[0]))
@@ -62,7 +61,7 @@ with tf.Session() as sess:
     tr_loss, dev_loss = {}, {}
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
-        outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_}, options=run_options)
+        outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_})
 
         if j % debug_steps == 0:
             debug_output(sentences_ids_, outputs_)
