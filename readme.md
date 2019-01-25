@@ -20,3 +20,7 @@ does crossentropy loss care about the order of the arguments.
 
 ### Others
 pass all the info into here.
+
+
+# Resources
+scp -r datasets aranguri@jacob.stanford.edu:sasses
