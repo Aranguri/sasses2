@@ -13,7 +13,7 @@ debug_steps = 3
 embeddings_size = 50 # It's fixed from glove
 source = 'GPU'
 
-if source == 'GPU': LSTM = tf.contrib.cudnn_rnn.CudnnLSTM
+if source == 'GPU': LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
 else: LSTM = tf.contrib.rnn.LSTMBlockCell
 task = SenTask(batch_size)
 vocab_size = task.get_lengths()
