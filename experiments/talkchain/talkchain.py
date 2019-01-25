@@ -14,7 +14,7 @@ debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
 char_limit = -1#25000000
 seq_length_limit = 40
-exp_name = f'{exp_name},limit:{char_limit},batch_size:{batch_size}'
+exp_name = f'{exp_name},limit:{char_limit},batch_size:{batch_size},seq_length:{seq_length_limit}'
 running_GPU = True
 
 if running_GPU:
