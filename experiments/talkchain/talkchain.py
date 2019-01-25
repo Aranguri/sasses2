@@ -15,7 +15,7 @@ running_GPU = True
 
 if running_GPU:
     LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
-    limit_task = -1 # No limit
+    limit_task = 10000000 # No limit
 else:
     LSTM = tf.contrib.rnn.LSTMBlockCell
     limit_task = 1000000
