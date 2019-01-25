@@ -5,11 +5,16 @@ from utils.embedder.embedder import Embedder
 import itertools
 import tensorflow as tf
 from utils.util import *
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--lr', type=float, default=1e-4, help='learning rate')
+args = parser.parse_args()
 
 exp_name = 'exp:talkchain,task:cbt,embed:50,v:2'
 batch_size = 128
 hidden_size = 512
-learning_rate = 1e-4
+learning_rate = args.lr
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
 char_limit = -1#25000000
