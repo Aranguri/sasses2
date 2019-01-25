@@ -49,7 +49,7 @@ def debug_output(answer, output):
     ixs = np.argmax(output[0], axis=1)
     original = ' '.join(task.ixs_to_words(answer[0]))
     recovered = ' '.join(task.ixs_to_words(ixs))
-    print(f'{original}\n{recovered}\n\n-----------')
+    print(original + '\n' + recovered + 'n\n-----------')
 
 with tf.Session() as sess:
     embedder = Embedder()
