@@ -14,3 +14,7 @@ it seems weird to me that it gets that good performance at recovering the senten
 
 Other
 The relative change between GPU and cpu is 100x
+
+19587.pts-4.jacob (1e-4)
+19514.pts-4.jacob (1e-3)
+19713.pts-4.jacob (1e-5)
