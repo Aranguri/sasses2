@@ -6,13 +6,14 @@ import itertools
 import tensorflow as tf
 from utils.util import *
 
-exp_name = 'exp:talkchain,task:cbt,embed:50'
+exp_name = 'exp:talkchain,task:cbt,embed:50,v:2'
 batch_size = 128
 hidden_size = 512
 learning_rate = 1e-4
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
-limit_task = -1#25000000
+char_limit = -1#25000000
+seq_length_limit = 20
 exp_name = f'{exp_name},limit:{limit_task},batch_size:{batch_size}'
 running_GPU = True
 
@@ -20,7 +21,7 @@ if running_GPU:
     LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
 else:
     LSTM = tf.contrib.rnn.LSTMBlockCell
-task = SenTask(batch_size, limit_task, exp_name)
+task = SenTask(batch_size, char_limit, seq_length_limit, exp_name)
 vocab_size = task.get_lengths()
 
 embeddings_init = tf.placeholder(tf.float32, (vocab_size, embeddings_size))

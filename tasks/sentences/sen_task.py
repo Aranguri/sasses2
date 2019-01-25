@@ -6,11 +6,11 @@ import os
 import pickle
 
 class SenTask:
-    def __init__(self, batch_size, limit, exp_name):
+    def __init__(self, batch_size, char_limit, seq_length_limit, exp_name):
         self.batch_size = batch_size
         file_path = f'../../datasets/tasks/{exp_name}.pickle'
         if not os.path.isfile(file_path):
-            self.generate(limit, file_path)
+            self.generate(char_limit, seq_length_limit, file_path)
         else:
             with open(file_path, 'rb') as handle:
                 self.batches, self.vocab_size, self.word_to_i, self.i_to_word = pickle.load(handle)
@@ -23,8 +23,8 @@ class SenTask:
         self.t_i = 0
         self.d_i = 0
 
-    def generate(self, limit, file_path):
-        text = open('../../datasets/childrens_book/data/cbt_train.txt').read()[:limit]
+    def generate(self, char_limit, seq_length_limit, file_path):
+        text = open('../../datasets/childrens_book/data/cbt_train.txt').read()[:char_limit]
         words = clean_text(text)
 
         self.vocab_size, self.word_to_i, self.i_to_word, data = tokenize_words_simple(words)
@@ -33,7 +33,7 @@ class SenTask:
         self.batches = []
         for i in range(len(data) // self.batch_size):
             batch = data[i * self.batch_size:(i + 1) * self.batch_size]
-            batch = pad_sequences(batch, padding='post')
+            batch = pad_sequences(batch, max_len=seq_length_limit, padding='post')
             self.batches.append(batch)
 
         to_store = [self.batches, self.vocab_size, self.word_to_i, self.i_to_word]
