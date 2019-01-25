@@ -41,19 +41,27 @@ loss = tf.losses.softmax_cross_entropy(sentences_hot, outputs)
 optimizer = tf.train.AdamOptimizer(learning_rate)
 minimize = optimizer.minimize(loss)
 
+def debug_output(answer, output):
+    ixs = np.argmax(output[0], axis=1)
+    original = ' '.join(task.ixs_to_words(answer[0]))
+    recovered = ' '.join(task.ixs_to_words(ixs))
+    print(f'{original}\n{recovered}\n\n-----------')
+
 with tf.Session() as sess:
     embedder = Embedder()
     embeddings_init_ = embedder.load('talkchain-50', task.get_words())
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
-    tr_loss = {}
+    tr_loss, dev_loss = {}, {}
 
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
         outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_})
-        ixs = np.argmax(outputs_[0], axis=1)
-        plot_mode = 'none' if running_GPU else 'tr'
+
         if j % debug_steps == 0:
-            original = ' '.join(task.ixs_to_words(sentences_ids_[0]))
-            recovered = ' '.join(task.ixs_to_words(ixs))
-            print(f'{original}\n{recovered}\n\n-----------')
-        debug(j, tr_loss, tr_loss, debug_steps, plot_mode)
+            debug_output(sentences_ids_, outputs_)
+            sentences_ids_ = task.dev_batch()
+            outputs_, dev_loss[j] = sess.run([outputs, loss], {sentences_ids: sentences_ids_})
+            debug_output(sentences_ids_, outputs_)
+
+        plot_mode = 'none' if running_GPU else 'tr'
+        debug(j, tr_loss, dev_loss, debug_steps, plot_mode)
