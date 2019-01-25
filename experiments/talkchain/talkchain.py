@@ -9,11 +9,11 @@ from util import *
 batch_size = 128
 hidden_size = 512
 learning_rate = 1e-4
-debug_steps = 3
+debug_steps = 10
 embeddings_size = 50 # It's fixed from glove
-source = 'GPU'
+running_GPU = True
 
-if source == 'GPU': LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
+if running_GPU == 'GPU': LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
 else: LSTM = tf.contrib.rnn.LSTMBlockCell
 task = SenTask(batch_size)
 vocab_size = task.get_lengths()
@@ -51,4 +51,5 @@ with tf.Session() as sess:
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
         tr_loss[j], _ = sess.run([loss, minimize], {sentences_ids: sentences_ids_})
-        debug(j, tr_loss, tr_loss, debug_steps, 'tr')
+        plot_mode = 'none' if running_GPU else 'tr'
+        debug(j, tr_loss, tr_loss, debug_steps, plot_mode)
