@@ -23,4 +23,4 @@ pass all the info into here.
 
 
 # Resources
-scp -r datasets aranguri@jacob.stanford.edu:sasses
+scp -r datasets aranguri@sc.stanford.edu:sasses

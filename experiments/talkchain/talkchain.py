@@ -13,7 +13,7 @@ debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
 running_GPU = True
 
-if running_GPU == 'GPU':
+if running_GPU:
     LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
     limit_task = -1 # No limit
 else:
