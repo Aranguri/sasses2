@@ -3,8 +3,8 @@ Inspect how sentences are recovered. Where it fails? How does the recovering qua
 for test time, we need to avoid passing the value of the correct sentence as input in the next step, but we pass what it said as the next input.
 
 Steps:
-* preprocess cbtest so as to avoid loading it every time. oho que children book the file we are using isn't what we want.
 * check loss and quality of output sentences with different methods (specifically check the output projection)
+* future: increase training and embedding size
 
 Logs
 ## 1
