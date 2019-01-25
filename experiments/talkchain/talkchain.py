@@ -31,8 +31,8 @@ start_stacked = tf.expand_dims(start_stacked, 1)
 shifted_inputs = tf.concat((start_stacked, inputs[:, 1:]), axis=1)
 
 # maydo: use gpu-lstm
-rnn_fw = LSTM(num_units=hidden_size, name='rnn_fw')
-rnn_bw = LSTM(num_units=hidden_size, name='rnn_bw')
+rnn_fw = LSTM(num_units=hidden_size)#, name='rnn_fw')
+rnn_bw = LSTM(num_units=hidden_size)#, name='rnn_bw')
 _, final_state = tf.nn.dynamic_rnn(rnn_fw, inputs, dtype=tf.float32)
 outputs, _ = tf.nn.dynamic_rnn(rnn_fw, shifted_inputs, dtype=tf.float32)
 # Other options for the following function: (1) keep generating a prob. dist. directly, but use something more complex, like a mlp. (2) produce a vector in embedding space and compute the similarity over all the memories (aka attention.) Then we have a probability distribution.
