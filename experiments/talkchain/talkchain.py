@@ -14,7 +14,7 @@ debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
 char_limit = -1#25000000
 seq_length_limit = 20
-exp_name = f'{exp_name},limit:{limit_task},batch_size:{batch_size}'
+exp_name = f'{exp_name},limit:{char_limit},batch_size:{batch_size}'
 running_GPU = True
 
 if running_GPU:
@@ -60,7 +60,6 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
 
     tr_loss, dev_loss = {}, {}
-    exit()
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
         outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_}, options=run_options)
