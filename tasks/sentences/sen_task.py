@@ -15,7 +15,7 @@ class SenTask:
             with open(file_path, 'rb') as handle:
                 self.batches, self.vocab_size, self.word_to_i, self.i_to_word = pickle.load(handle)
 
-        max_len = max([len(b) for b in self.batches])
+        max_len = max([np.shape(b)[1] for b in self.batches])
         print(max_len)
         exit()
         self.train = self.batches[:-10]
