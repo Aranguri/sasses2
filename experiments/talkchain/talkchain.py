@@ -12,7 +12,7 @@ hidden_size = 512
 learning_rate = 1e-4
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
-limit_task = 3000000
+limit_task = -1#25000000
 exp_name = f'{exp_name},limit:{limit_task},batch_size:{batch_size}'
 running_GPU = True
 
@@ -46,6 +46,7 @@ loss = tf.losses.softmax_cross_entropy(sentences_hot, outputs)
 optimizer = tf.train.AdamOptimizer(learning_rate)
 minimize = optimizer.minimize(loss)
 
+run_options = tf.RunOptions(report_tensor_allocations_upon_oom = True)
 def debug_output(answer, output):
     ixs = np.argmax(output[0], axis=1)
     original = ' '.join(task.ixs_to_words(answer[0]))
@@ -56,11 +57,12 @@ with tf.Session() as sess:
     embedder = Embedder()
     embeddings_init_ = embedder.load(exp_name, task.get_words())
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
+
     tr_loss, dev_loss = {}, {}
 
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
-        outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_})
+        outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_}, options=run_options)
 
         if j % debug_steps == 0:
             debug_output(sentences_ids_, outputs_)
