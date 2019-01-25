@@ -4,7 +4,7 @@ from tasks.sentences.sen_task import SenTask
 from utils.embedder.embedder import Embedder
 import itertools
 import tensorflow as tf
-from util import *
+from utils.util import *
 
 batch_size = 128
 hidden_size = 512
@@ -15,7 +15,7 @@ running_GPU = True
 
 if running_GPU:
     LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
-    limit_task = 10000000 # No limit
+    limit_task = 300000 # No limit
 else:
     LSTM = tf.contrib.rnn.LSTMBlockCell
     limit_task = 1000000
@@ -53,7 +53,7 @@ def debug_output(answer, output):
 
 with tf.Session() as sess:
     embedder = Embedder()
-    embeddings_init_ = embedder.load('talkchain-children-50', task.get_words())
+    embeddings_init_ = embedder.load('talkchain-cbt2-50', task.get_words())
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
     tr_loss, dev_loss = {}, {}
 

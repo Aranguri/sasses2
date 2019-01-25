@@ -1,4 +1,6 @@
 # General
+## Instructions for running
+The interesting things are in the experiments. After cloning this repo, you can run cd experiments/talkchain/ and python talkchain.py to get the chain-of-thoughts experiment running.
 
 # API
 The idea is for runner and task to be functions that can be run independently of the actual task and mann we are using.

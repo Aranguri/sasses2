@@ -1,12 +1,12 @@
 import sys
 sys.path.append('../')
-from util import *
+from utils.util import *
 from keras.preprocessing.sequence import pad_sequences
 
 class SenTask:
     def __init__(self, batch_size, limit):
         self.batch_size = batch_size
-        text = open('../../datasets/childrens_book/data/cbtest_P_train.txt').read()[:limit]
+        text = open('../../datasets/childrens_book/data/cbt_train.txt').read()[:limit]
         words = clean_text(text)
         # print(words)
 
@@ -18,7 +18,7 @@ class SenTask:
             batch = data[i * batch_size:(i + 1) * batch_size]
             batch = pad_sequences(batch, padding='post')
             batches.append(batch)
-        print(len(batches))
+            
         self.train = batches[:-10]
         self.dev = batches[-10:]
         self.t_i = 0
