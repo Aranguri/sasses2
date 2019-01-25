@@ -59,7 +59,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
 
     tr_loss, dev_loss = {}, {}
-
+    exit()
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
         outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_}, options=run_options)
