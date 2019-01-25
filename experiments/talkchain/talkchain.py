@@ -13,9 +13,13 @@ debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
 running_GPU = True
 
-if running_GPU == 'GPU': LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
-else: LSTM = tf.contrib.rnn.LSTMBlockCell
-task = SenTask(batch_size)
+if running_GPU == 'GPU':
+    LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
+    limit_task = -1 # No limit
+else:
+    LSTM = tf.contrib.rnn.LSTMBlockCell
+    limit_task = 1000000
+task = SenTask(batch_size, limit_task)
 vocab_size = task.get_lengths()
 
 embeddings_init = tf.placeholder(tf.float32, (vocab_size, embeddings_size))
@@ -28,7 +32,7 @@ inputs = tf.nn.embedding_lookup(embeddings, sentences_ids)
 
 start_stacked = tf.tile(start_vector, [batch_size, 1])
 start_stacked = tf.expand_dims(start_stacked, 1)
-shifted_inputs = tf.concat((start_stacked, inputs[:, 1:]), axis=1)
+shifted_inputs = tf.concat((start_stacked, inputs[:, :-1]), axis=1)
 
 rnn_fw = LSTM(hidden_size)#, name='rnn_fw')
 rnn_bw = LSTM(hidden_size)#, name='rnn_bw')
@@ -49,7 +53,7 @@ def debug_output(answer, output):
 
 with tf.Session() as sess:
     embedder = Embedder()
-    embeddings_init_ = embedder.load('talkchain-50', task.get_words())
+    embeddings_init_ = embedder.load('talkchain-children-50', task.get_words())
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
     tr_loss, dev_loss = {}, {}
 

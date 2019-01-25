@@ -7,7 +7,10 @@ Steps:
 * check loss and quality of output sentences with different methods (specifically check the output projection)
 
 Logs
+## 1
 Around 7000 iterations, it reaches .07 training loss
+## 2
+it seems weird to me that it gets that good performance at recovering the sentence. 
 
 Other
 The relative change between GPU and cpu is 100x
