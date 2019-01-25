@@ -33,6 +33,9 @@ class SenTask:
             batch = pad_sequences(batch, padding='post')
             self.batches.append(batch)
 
+        max_len = max([len(b) for b in self.batches])
+        print(max_len)
+
         to_store = [self.batches, self.vocab_size, self.word_to_i, self.i_to_word]
         with open(file_path, 'wb') as handle:
             pickle.dump(to_store, handle)
