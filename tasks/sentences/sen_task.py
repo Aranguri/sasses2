@@ -15,7 +15,6 @@ class SenTask:
             with open(file_path, 'rb') as handle:
                 self.batches, self.vocab_size, self.word_to_i, self.i_to_word = pickle.load(handle)
 
-        print(len(self.batches))
         self.train = self.batches[:-10]
         self.dev = self.batches[-10:]
         self.t_i = 0

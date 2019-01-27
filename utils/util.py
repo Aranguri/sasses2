@@ -221,14 +221,20 @@ def conv_structure(inpt, layers, verbose=False):
     return weight, inpt[0] * inpt[1]
 
 #todo: limit only three digits
-def debug(i, tr, dev, debug_steps, plot='none'):
+def debug(i, logs, debug_steps, plot='none'):
     if i % debug_steps == 0:
-        tr_list, dev_list = list(tr.values()), list(dev.values())
+        output = ''
 
-        print(f'{i}) Train: {np.mean(tr_list[-10:])} Dev: {np.mean(dev_list[-10:])}')
+        for name, metric in logs.items():
+            metric = list(metric.values())
+            metric = np.mean(metric[-10:])
+            #maydo: round metric to near decimals
+            output += f'{name}: {metric}. '
 
-        if plot == 'tr' or plot == 'both': smooth_plot(tr, 300)
-        if plot == 'dev' or plot == 'both': smooth_plot(dev, 300)
+        print(f'{i}) {output}')
+
+        if plot != 'none':
+            smooth_plot(logs[plot], 300)
 
 def load_glove():
     import pandas as pd

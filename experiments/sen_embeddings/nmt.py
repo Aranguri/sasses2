@@ -14,6 +14,7 @@ args = parser.parse_args()
 exp_name = 'exp:talkchain,task:cbt,embed:50,v:2'
 output_mode = 'proj+attn'
 batch_size = 128
+num_layers = 5
 hidden_size = 512
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
@@ -23,10 +24,12 @@ learning_rate = args.lr
 exp_name = f'{exp_name},limit:{char_limit},batch_size:{batch_size},seq_length:{seq_length_limit}'
 running_GPU = True
 
-if running_GPU:
-    LSTM = tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell
-else:
-    LSTM = tf.contrib.rnn.LSTMBlockCell
+def lstm_cell():
+    if running_GPU:
+        return tf.contrib.cudnn_rnn.CudnnCompatibleLSTMCell(hidden_size)
+    else:
+        return tf.contrib.rnn.LSTMBlockCell(hidden_size)
+
 task = SenTask(batch_size, char_limit, seq_length_limit, exp_name)
 vocab_size = task.get_lengths()
 
@@ -41,10 +44,10 @@ start_stacked = tf.tile(start_vector, [batch_size, 1])
 start_stacked = tf.expand_dims(start_stacked, 1)
 shifted_inputs = tf.concat((start_stacked, inputs[:, :-1]), axis=1)
 
-rnn_fw = LSTM(hidden_size)
-rnn_bw = LSTM(hidden_size)
-_, final_state = tf.nn.dynamic_rnn(rnn_fw, inputs, dtype=tf.float32)
-outputs, _ = tf.nn.dynamic_rnn(rnn_fw, shifted_inputs, dtype=tf.float32)
+stacked_rnn_fw = tf.contrib.rnn.MultiRNNCell([lstm_cell() for _ in range(num_layers)])
+# stacked_rnn_bw = tf.contrib.rnn.MultiRNNCell([lstm_cell() for _ in range(num_layers)])
+_, final_state = tf.nn.dynamic_rnn(stacked_rnn_fw, inputs, dtype=tf.float32)
+outputs, _ = tf.nn.dynamic_rnn(stacked_rnn_fw, shifted_inputs, dtype=tf.float32)
 # Other options for the following function: (1) keep generating a prob. dist. directly, but use something more complex, like a mlp. (2) produce a vector in embedding space and compute the similarity over all the memories (aka attention.) Then we have a probability distribution.
 if output_mode == 'proj':
     projection = tf.get_variable('projection', (hidden_size, vocab_size))
@@ -55,6 +58,7 @@ elif output_mode == 'proj+attn':
     outputs = tf.einsum('ijk,lk->ijl', outputs, embeddings) #or kl
 
 loss = tf.losses.softmax_cross_entropy(sentences_hot, outputs)
+accuracy = tf.reduce_mean(tf.to_float(sentences_ids == tf.argmax(outputs, axis=2)))
 optimizer = tf.train.AdamOptimizer(learning_rate)
 minimize = optimizer.minimize(loss)
 
@@ -69,16 +73,16 @@ with tf.Session() as sess:
     embeddings_init_ = embedder.load(exp_name, task.get_words())
     sess.run(tf.global_variables_initializer(), feed_dict={embeddings_init: embeddings_init_})
 
-    tr_loss, dev_loss = {}, {}
+    logs = {'tr_loss': {}, 'tr_acc': {}, 'dev_loss': {}, 'dev_acc': {}}
     for j in itertools.count():
         sentences_ids_ = task.train_batch()
-        outputs_, tr_loss[j], _ = sess.run([outputs, loss, minimize], {sentences_ids: sentences_ids_})
+        outputs_, logs['tr_loss'][j], logs['tr_acc'][j], _ = sess.run([outputs, loss, accuracy, minimize], {sentences_ids: sentences_ids_})
 
         if j % debug_steps == 0:
             debug_output(sentences_ids_, outputs_)
             sentences_ids_ = task.dev_batch()
-            outputs_, dev_loss[j] = sess.run([outputs, loss], {sentences_ids: sentences_ids_})
+            outputs_, logs['dev_loss'][j], logs['dev_acc'][j] = sess.run([outputs, loss, accuracy], {sentences_ids: sentences_ids_})
             debug_output(sentences_ids_, outputs_)
 
         plot_mode = 'none' if running_GPU else 'tr'
-        debug(j, tr_loss, dev_loss, debug_steps, plot_mode)
+        debug(j, logs, debug_steps, plot_mode)
