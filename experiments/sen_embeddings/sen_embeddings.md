@@ -137,8 +137,6 @@ The model is underfitting the training data. Possible things happening:
 theoretically, the problem is trivial if the hidden size is greater than or equal to the embedding size * seq_length. You just concatenate all the embeddings. The problem is that it's not clear how a LSTM could concatenate things. This is just NMT dude.
 
 # Steps
-* add max norm
-* fix accuracy
 * check how is the output of the guys
 * see how big is my training set compared to theirs
 * use bigger embedding_size?

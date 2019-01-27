@@ -18,7 +18,7 @@ num_layers = 5
 hidden_size = 512
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
-char_limit = 1000000#25000000
+char_limit = -1#1000000
 seq_length_limit = 40
 max_gradient_norm = 1
 learning_rate = args.lr
@@ -35,7 +35,7 @@ task = SenTask(batch_size, char_limit, seq_length_limit, exp_name)
 vocab_size = task.get_lengths()
 
 embeddings_init = tf.placeholder(tf.float32, (vocab_size, embeddings_size))
-sentences_ids = tf.placeholder(tf.int32, (batch_size, None))
+sentences_ids = tf.placeholder(tf.int64, (batch_size, None))
 sentences_hot = tf.one_hot(sentences_ids, vocab_size)
 embeddings = tf.get_variable('embeddings', initializer=embeddings_init)
 start_vector = tf.get_variable('start_vector', (1, embeddings_size))
