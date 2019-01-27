@@ -18,8 +18,9 @@ num_layers = 5
 hidden_size = 512
 debug_steps = 100
 embeddings_size = 50 # It's fixed from glove
-char_limit = -1#25000000
+char_limit = 1000000#25000000
 seq_length_limit = 40
+max_gradient_norm = 1
 learning_rate = args.lr
 exp_name = f'{exp_name},limit:{char_limit},batch_size:{batch_size},seq_length:{seq_length_limit}'
 running_GPU = True
@@ -58,9 +59,12 @@ elif output_mode == 'proj+attn':
     outputs = tf.einsum('ijk,lk->ijl', outputs, embeddings) #or kl
 
 loss = tf.losses.softmax_cross_entropy(sentences_hot, outputs)
-accuracy = tf.reduce_mean(tf.to_float(sentences_ids == tf.argmax(outputs, axis=2)))
+accuracy = tf.reduce_mean(tf.to_float(tf.equal(sentences_ids, tf.argmax(outputs, axis=2))))
 optimizer = tf.train.AdamOptimizer(learning_rate)
-minimize = optimizer.minimize(loss)
+params = tf.trainable_variables()
+gradients = tf.gradients(loss, params)
+clipped_gradients, _ = tf.clip_by_global_norm(gradients, max_gradient_norm)
+minimize = optimizer.apply_gradients(zip(clipped_gradients, params))
 
 def debug_output(answer, output):
     ixs = np.argmax(output[0], axis=1)

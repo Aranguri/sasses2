@@ -138,6 +138,7 @@ theoretically, the problem is trivial if the hidden size is greater than or equa
 
 # Steps
 * add max norm
+* fix accuracy
 * check how is the output of the guys
 * see how big is my training set compared to theirs
 * use bigger embedding_size?
