@@ -45,9 +45,9 @@ start_stacked = tf.expand_dims(start_stacked, 1)
 shifted_inputs = tf.concat((start_stacked, inputs[:, :-1]), axis=1)
 
 stacked_rnn_fw = tf.contrib.rnn.MultiRNNCell([lstm_cell() for _ in range(num_layers)])
-# stacked_rnn_bw = tf.contrib.rnn.MultiRNNCell([lstm_cell() for _ in range(num_layers)])
-_, final_state = tf.nn.dynamic_rnn(stacked_rnn_fw, inputs, dtype=tf.float32)
-outputs, _ = tf.nn.dynamic_rnn(stacked_rnn_fw, shifted_inputs, dtype=tf.float32)
+stacked_rnn_bw = tf.contrib.rnn.MultiRNNCell([lstm_cell() for _ in range(num_layers)])
+_, final_state = tf.nn.dynamic_rnn(stacked_rnn_fw, inputs, dtype=tf.float32, scope='fw')
+outputs, _ = tf.nn.dynamic_rnn(stacked_rnn_bw, shifted_inputs, dtype=tf.float32, scope='bw')
 # Other options for the following function: (1) keep generating a prob. dist. directly, but use something more complex, like a mlp. (2) produce a vector in embedding space and compute the similarity over all the memories (aka attention.) Then we have a probability distribution.
 if output_mode == 'proj':
     projection = tf.get_variable('projection', (hidden_size, vocab_size))

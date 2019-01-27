@@ -99,11 +99,16 @@ It's particularly good with punctuation marks. In this case, wherever there was 
  ` i are , '
  asked the king , and the the other .n
 
+400k iterations
+Train around 2 (variable between 1.2 and 3.2). Dev: 2.3
 
 ### 20339.pts-4.jacob (1e-4 and proj+attn)
 206k iterations
 dev set: 2.24
 tr set: (avg) 1.8
+
+1.1M iterations
+not that many changes in the tr set. Dev set got worse (around 2.6)
 
 #### Quality
 ##### Trainign set
@@ -121,10 +126,7 @@ cried the old man .
 it captures some entities so far. It's also interesting that it captures the entities exactly in the right place
 >the king was unwilling to risk his third son on such an errand , but he begged so long that his father had at last to consent .
 ` king was very to be the own son , the a purpose , and he was to much that he father would no once told ask .
-
-
 `
-
 ### Conclusions
 The model is underfitting the training data. Possible things happening:
 * not enough iterations
@@ -133,3 +135,9 @@ The model is underfitting the training data. Possible things happening:
 * max_seq len too large
 
 theoretically, the problem is trivial if the hidden size is greater than or equal to the embedding size * seq_length. You just concatenate all the embeddings. The problem is that it's not clear how a LSTM could concatenate things. This is just NMT dude.
+
+# Steps
+* add max norm
+* check how is the output of the guys
+* see how big is my training set compared to theirs
+* use bigger embedding_size?
