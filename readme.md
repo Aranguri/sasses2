@@ -9,6 +9,16 @@ The interesting things are in the experiments folder. After cloning this repo, y
 The idea is for runner and task to be functions that can be run independently of the actual task and mann we are using.
 
 # Done things and things maydo
+## State
+### compositionality/drew/y/Similarity functions
+Finish NTM and DMN
+
+### NMT/sentences embeddings/talkchain
+Finish reading previous papers (on memnns)
+Read one paper on NMT
+Implement NMT
+Continue with talkchain exp
+
 ## Experiments
 ### Similarity functions
 What are the pros and cons of the different similarity functions? Is there any similarity function that dominates the others? If we use both additive and multiplicative interactions, do we enable better performance? Not only code, but theoretically think about this.
@@ -37,6 +47,10 @@ For a set of _similar_ memories, we find one representative. Then, we express th
 * Is there a way to download part of the internet (only text.) So as to give an agent freedom to choose almost any link but without having to wait for the request. (Otherwise standard deep learning probably won't work, because we wouldn't have enough training cases.)
 * Recursive hopfield net
 * Analogies
+* Compositional WE
+* Instead of having one memory for each agent, we can have a shared memory between say a hundred agents. Each agent read/writes something to the memory. We can distribute this to run it. (This could be more useful if we have an agent that queries the memory only once in a while.)
+* More complex relationships between WE
+* Do memories tend to be distributed?
 
 ## Manns
 ### DMN
@@ -63,6 +77,11 @@ does crossentropy loss care about the order of the arguments.
 pass all the info into here.
 ### Resources
 scp -r datasets aranguri@sc.stanford.edu:sasses
+
+
+
+
+
 
 
 # MANNs

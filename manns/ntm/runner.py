@@ -47,7 +47,6 @@ if mann == 'official':
                     clip_value=20)
 elif mann == 'mine':
     cell = NTMCell(output_size, batch_size, memory_size, memory_length, memory_cell, h_size=100, shift_length=3)
-
 else:
     layers = [tf.contrib.rnn.LSTMBlockCell(num_units=h) for h in h_lengths_LSTM]
     cell = tf.nn.rnn_cell.MultiRNNCell(layers)
