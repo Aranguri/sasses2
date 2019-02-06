@@ -1,0 +1,2 @@
+model_checkpoint_path: "basic_templates_reg=1in10_num=30-1000"
+all_model_checkpoint_paths: "basic_templates_reg=1in10_num=30-1000"

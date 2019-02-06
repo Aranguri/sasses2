@@ -1,2 +1,4 @@
 datasets/*
 datasets3/*
+manns/bi-att-flow/data
+manns/bi-att-flow/out

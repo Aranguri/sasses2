@@ -1,0 +1,2 @@
+model_checkpoint_path: "basic2-1000"
+all_model_checkpoint_paths: "basic2-1000"
